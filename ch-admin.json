@@ -1,13 +1,13 @@
 {
   "name": "CH Admin",
   "slug": "ch-admin",
-  "version": "3.0",
-  "download_url": "https://tcouty.github.io/wp-updates/ch-admin-3.0.zip",
+  "version": "3.1",
+  "download_url": "https://tcouty.github.io/wp-updates/ch-admin-3.1.zip",
   "tested": "6.7",
   "requires": "5.0",
-  "author": "Community Health Media Group",
+  "author": "Tyler Couty",
   "sections": {
-    "description": "Final test",
-    "changelog": "Version 3.0: Testing"
+    "description": "Community Health admin tools for managing login logos, admin toolbar, and Google Analytics.",
+    "changelog": "Version 3.1: Fixed universal updating deployment"
   }
 }
