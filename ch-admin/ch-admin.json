@@ -1,13 +1,13 @@
 {
   "name": "CH Admin",
   "slug": "ch-admin",
-  "version": "4.1",
-  "download_url": "https://tcouty.github.io/wp-updates/ch-admin/ch-admin-4.1.zip",
+  "version": "4.2",
+  "download_url": "https://tcouty.github.io/wp-updates/ch-admin/ch-admin-4.2.zip",
   "tested": "6.7",
   "requires": "5.0",
   "author": "Tyler Couty",
   "sections": {
     "description": "Community Health admin tools for managing login logos, admin toolbar, and Google Analytics. Includes custom login URL feature.",
-    "changelog": "Version 4.1: Fixed custom login URL (ch-access) redirect issue - prevents 404 errors after login by properly rewriting all wp-login.php redirects"
+    "changelog": "Version 4.2: Fixed custom login URL (ch-access) redirect issue - prevents 404 errors after login by properly rewriting all wp-login.php redirects"
   }
 }
