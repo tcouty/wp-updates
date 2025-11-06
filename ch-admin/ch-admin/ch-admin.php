@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CH Admin
  * Description: Community Health admin tools. Lets you upload a custom login logo, toggle the admin toolbar, and add Google Analytics.
- * Version: 3.8
+ * Version: 3.9
  * Author: Tyler Couty
  */
 
@@ -192,18 +192,19 @@ add_action('wp_head', 'ch_admin_add_google_analytics');
 function ch_admin_custom_login_url() {
     $custom_slug = 'ch-access';
     
-    // Redirect default login pages to custom URL
-    add_action('login_init', function() use ($custom_slug) {
+    // Block default login pages with 404
+    add_action('login_init', function() {
         $request_uri = $_SERVER['REQUEST_URI'];
-        if (strpos($request_uri, 'wp-login.php') !== false && !isset($_GET['action'])) {
-            wp_redirect(home_url("/$custom_slug"));
+        if (strpos($request_uri, 'wp-login.php') !== false) {
+            status_header(404);
+            nocache_headers();
+            include(get_query_template('404'));
             exit;
         }
     });
 
     // Handle custom login URL
     add_action('init', function() use ($custom_slug) {
-        global $pagenow;
         $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $request = trim($request, '/');
 
@@ -216,7 +217,9 @@ function ch_admin_custom_login_url() {
     // Block direct access to wp-admin without login
     add_action('admin_init', function() use ($custom_slug) {
         if (!is_user_logged_in() && !defined('DOING_AJAX')) {
-            wp_redirect(home_url("/$custom_slug"));
+            status_header(404);
+            nocache_headers();
+            include(get_query_template('404'));
             exit;
         }
     }, 1);
