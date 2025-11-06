@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CH Admin
  * Description: Community Health admin tools. Lets you upload a custom login logo, toggle the admin toolbar, and add Google Analytics.
- * Version: 4.0
+ * Version: 4.1
  * Author: Tyler Couty
  */
 
@@ -191,28 +191,64 @@ add_action('wp_head', 'ch_admin_add_google_analytics');
 // Custom Login URL - hardcoded to /ch-access
 function ch_admin_custom_login_url() {
     $custom_slug = 'ch-access';
-    
-    // Block wp-login.php with 404
+
+    // Block wp-login.php with 404, but allow POST requests (login form submission)
     add_action('init', function() use ($custom_slug) {
         $request_uri = $_SERVER['REQUEST_URI'];
-        
-        // If someone tries wp-login.php, show 404
+
+        // If someone tries wp-login.php via GET, show 404
+        // Allow POST requests for login processing
         if (strpos($request_uri, 'wp-login.php') !== false) {
-            status_header(404);
-            nocache_headers();
-            include(get_query_template('404'));
-            exit;
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                status_header(404);
+                nocache_headers();
+                include(get_query_template('404'));
+                exit;
+            }
         }
-        
+
         // If they hit our custom URL, load the login page
         $request = parse_url($request_uri, PHP_URL_PATH);
         $request = trim($request, '/');
-        
+
         if ($request === $custom_slug) {
             require_once ABSPATH . 'wp-login.php';
             exit;
         }
     });
+
+    // Filter login URL to use custom slug
+    add_filter('login_url', function($login_url, $redirect) use ($custom_slug) {
+        $custom_url = home_url('/' . $custom_slug . '/');
+        if ($redirect) {
+            $custom_url = add_query_arg('redirect_to', urlencode($redirect), $custom_url);
+        }
+        return $custom_url;
+    }, 10, 2);
+
+    // Filter site_url to replace wp-login.php with custom slug
+    add_filter('site_url', function($url, $path) use ($custom_slug) {
+        if (strpos($url, 'wp-login.php') !== false) {
+            $url = str_replace('wp-login.php', $custom_slug, $url);
+        }
+        return $url;
+    }, 10, 2);
+
+    // Filter network_site_url to replace wp-login.php
+    add_filter('network_site_url', function($url, $path) use ($custom_slug) {
+        if (strpos($url, 'wp-login.php') !== false) {
+            $url = str_replace('wp-login.php', $custom_slug, $url);
+        }
+        return $url;
+    }, 10, 2);
+
+    // Filter redirects to replace wp-login.php
+    add_filter('wp_redirect', function($location) use ($custom_slug) {
+        if (strpos($location, 'wp-login.php') !== false) {
+            $location = str_replace('wp-login.php', $custom_slug, $location);
+        }
+        return $location;
+    }, 10, 1);
 }
 add_action('plugins_loaded', 'ch_admin_custom_login_url');
 
