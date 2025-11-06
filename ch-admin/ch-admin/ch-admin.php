@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CH Admin
  * Description: Community Health admin tools. Lets you upload a custom login logo, toggle the admin toolbar, and add Google Analytics.
- * Version: 3.4
+ * Version: 3.6
  * Author: Tyler Couty
  */
 
