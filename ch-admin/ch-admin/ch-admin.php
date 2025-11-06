@@ -188,6 +188,41 @@ function ch_admin_add_google_analytics() {
 }
 add_action('wp_head', 'ch_admin_add_google_analytics');
 
+// Custom Login URL - hardcoded to /ch-access
+function ch_admin_custom_login_url() {
+    $custom_slug = 'ch-access';
+    
+    // Redirect default login pages to custom URL
+    add_action('login_init', function() use ($custom_slug) {
+        $request_uri = $_SERVER['REQUEST_URI'];
+        if (strpos($request_uri, 'wp-login.php') !== false && !isset($_GET['action'])) {
+            wp_redirect(home_url("/$custom_slug"));
+            exit;
+        }
+    });
+
+    // Handle custom login URL
+    add_action('init', function() use ($custom_slug) {
+        global $pagenow;
+        $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $request = trim($request, '/');
+
+        if ($request === $custom_slug) {
+            require_once ABSPATH . 'wp-login.php';
+            exit;
+        }
+    });
+
+    // Block direct access to wp-admin without login
+    add_action('admin_init', function() use ($custom_slug) {
+        if (!is_user_logged_in() && !defined('DOING_AJAX')) {
+            wp_redirect(home_url("/$custom_slug"));
+            exit;
+        }
+    }, 1);
+}
+add_action('plugins_loaded', 'ch_admin_custom_login_url');
+
 
 // ----------------------
 // CH Admin Self-Updater
