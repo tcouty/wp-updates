@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CH Admin
  * Description: Community Health admin tools. Lets you upload a custom login logo, toggle the admin toolbar, and add Google Analytics.
- * Version: 4.2
+ * Version: 4.3
  * Author: Tyler Couty
  */
 
@@ -188,70 +188,6 @@ function ch_admin_add_google_analytics() {
 }
 add_action('wp_head', 'ch_admin_add_google_analytics');
 
-// Custom Login URL - hardcoded to /ch-access
-function ch_admin_custom_login_url() {
-    $custom_slug = 'ch-access';
-
-    // Block wp-login.php with 404 (but allow for logged-in users)
-    add_action('init', function() use ($custom_slug) {
-        $request_uri = $_SERVER['REQUEST_URI'];
-
-        // If someone tries wp-login.php
-        if (strpos($request_uri, 'wp-login.php') !== false) {
-            // Allow logged-in users (for logout, etc)
-            if (!is_user_logged_in()) {
-                status_header(404);
-                nocache_headers();
-                include(get_query_template('404'));
-                exit;
-            }
-        }
-
-        // If they hit our custom URL, load the login page
-        $request = parse_url($request_uri, PHP_URL_PATH);
-        $request = trim($request, '/');
-
-        if ($request === $custom_slug) {
-            require_once ABSPATH . 'wp-login.php';
-            exit;
-        }
-    });
-
-    // Rewrite all wp-login.php URLs to use our custom slug
-    add_filter('site_url', function($url, $path) use ($custom_slug) {
-        if (strpos($url, 'wp-login.php') !== false) {
-            $url = home_url($custom_slug);
-            if (strpos($path, '?') !== false) {
-                $url .= '?' . parse_url($path, PHP_URL_QUERY);
-            }
-        }
-        return $url;
-    }, 10, 2);
-
-    add_filter('network_site_url', function($url, $path) use ($custom_slug) {
-        if (strpos($url, 'wp-login.php') !== false) {
-            $url = home_url($custom_slug);
-            if (strpos($path, '?') !== false) {
-                $url .= '?' . parse_url($path, PHP_URL_QUERY);
-            }
-        }
-        return $url;
-    }, 10, 2);
-
-    // Intercept redirects to wp-login.php
-    add_filter('wp_redirect', function($location) use ($custom_slug) {
-        if (strpos($location, 'wp-login.php') !== false) {
-            $location = str_replace('wp-login.php', $custom_slug, $location);
-        }
-        return $location;
-    }, 10, 1);
-
-    // Change the login URL
-    add_filter('login_url', function($login_url) use ($custom_slug) {
-        return home_url($custom_slug);
-    });
-}
-add_action('plugins_loaded', 'ch_admin_custom_login_url');
 
 // ----------------------
 // CH Admin Self-Updater
