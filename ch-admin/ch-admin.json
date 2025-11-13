@@ -1,13 +1,13 @@
 {
   "name": "CH Admin",
   "slug": "ch-admin",
-  "version": "4.3",
-  "download_url": "https://tcouty.github.io/wp-updates/ch-admin/ch-admin-4.3.zip",
+  "version": "4.4",
+  "download_url": "https://tcouty.github.io/wp-updates/ch-admin/ch-admin-4.4.zip",
   "tested": "6.7",
   "requires": "5.0",
   "author": "Tyler Couty",
   "sections": {
     "description": "Community Health admin tools for managing login logos, admin toolbar, and Google Analytics. Includes custom login URL feature.",
-    "changelog": "Version 4.3: Fixed bugs"
+    "changelog": "Version 4.4: Added GA blank admin notice"
   }
 }
