@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CH Admin
  * Description: Community Health admin tools. Lets you upload a custom login logo, toggle the admin toolbar, and add Google Analytics.
- * Version: 4.4
+ * Version: 4.5
  * Author: Tyler Couty
  */
 
@@ -175,17 +175,15 @@ function ch_admin_ga_notice() {
 }
 add_action('admin_notices', 'ch_admin_ga_notice');
 
-// Add Google Analytics (front end only)
+// Add Google Analytics
 function ch_admin_add_google_analytics() {
-    if (is_admin() || is_user_logged_in()) {
-        return; // Don't load GA in admin or for logged-in users
+    if (is_admin()) {
+        return; // Don't load GA in wp-admin backend
     }
-
     $ga_id = get_option('ch_admin_ga_id');
     if (empty($ga_id)) {
         return;
     }
-
     echo "
     <!-- Google Analytics -->
     <script async src='https://www.googletagmanager.com/gtag/js?id=" . esc_js($ga_id) . "'></script>
